@@ -1,6 +1,5 @@
-let a = 0;
-let b = 0;
-let op = "+";
+let a, b, op;
+// TODO: add handler for last clicked value
 let displayValue = "";
 
 function add(a, b) {
@@ -44,8 +43,23 @@ function handleDigitClicked(event) {
   dispatchDisplayUpdate();
 }
 
+function handleOperationClicked(event) {
+  const button = event.target;
+  // TODO: make sure multiple consecutive clicked ops is handled
+  a = +displayValue;
+  displayValue = "";
+  op = button.textContent;
+  // TODO: handle display/chain update if a is non-null
+}
+
 function handleClearClicked() {
   displayValue = "";
+  dispatchDisplayUpdate();
+}
+
+function handleEqualsClicked() {
+  b = +displayValue;
+  displayValue = operate(a, b, op);
   dispatchDisplayUpdate();
 }
 
@@ -54,9 +68,13 @@ function updateDisplay() {
 }
 
 const digitsContainer = document.querySelector(".digits");
-const clearButton = document.querySelector("#clear");
+const opsContainer = document.querySelector(".operations");
+const clear = document.querySelector("#clear");
+const equals = document.querySelector("#equals");
 const display = document.querySelector(".display");
 
 digitsContainer.addEventListener("click", handleDigitClicked);
-clearButton.addEventListener("click", handleClearClicked);
+opsContainer.addEventListener("click", handleOperationClicked);
+clear.addEventListener("click", handleClearClicked);
+equals.addEventListener("click", handleEqualsClicked);
 display.addEventListener("displayUpdate", updateDisplay);
