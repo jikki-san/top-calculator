@@ -1,6 +1,6 @@
 let a, b, op;
-// TODO: add handler for last clicked value
 let displayValue = "";
+let prevButton = "";
 
 function add(a, b) {
   return a + b;
@@ -15,6 +15,9 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
+  if (b === 0) {
+    return "BRUH";
+  }
   return a / b;
 }
 
@@ -28,7 +31,6 @@ function operate(a, b, op) {
       return multiply(a, b);
     case "/":
       return divide(a, b);
-    // TODO: add a default case
   }
 }
 
@@ -40,26 +42,54 @@ function dispatchDisplayUpdate() {
 function handleDigitClicked(event) {
   const button = event.target;
   displayValue += button.textContent;
+  prevButton = button.textContent;
   dispatchDisplayUpdate();
 }
 
 function handleOperationClicked(event) {
+  if ("+_*/c".includes(prevButton)) {
+    return;
+  }
   const button = event.target;
-  // TODO: make sure multiple consecutive clicked ops is handled
+  if (prevButton === "=") {
+    op = button.textContent;
+    prevButton = button.textContent;
+    displayValue = "";
+    return;
+  }
+  if (a && !b) {
+    b = +displayValue;
+  }
+  if (a && b) {
+    const result = operate(a, b, op);
+    displayValue = result;
+    dispatchDisplayUpdate();
+  }
   a = +displayValue;
   displayValue = "";
   op = button.textContent;
-  // TODO: handle display/chain update if a is non-null
+  prevButton = button.textContent;
 }
 
 function handleClearClicked() {
   displayValue = "";
+  a = undefined;
+  b = undefined;
+  op = undefined;
   dispatchDisplayUpdate();
+  prevButton = "c";
 }
 
 function handleEqualsClicked() {
+  if (!a || prevButton === "=") {
+    return;
+  }
   b = +displayValue;
-  displayValue = operate(a, b, op);
+  const result = operate(a, b, op);
+  a = result;
+  b = undefined;
+  displayValue = result;
+  prevButton = "=";
   dispatchDisplayUpdate();
 }
 
